@@ -1,0 +1,8 @@
+# Compilables
+*.pyc
+
+# Cache
+__pycache__/
+
+# SQLite Databases
+sql_app.db
