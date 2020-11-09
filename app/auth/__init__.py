@@ -18,6 +18,12 @@ CREDENTIALS_EXCEPTION = HTTPException(
     headers={'WWW-Authenticate': 'Bearer'}
 )
 
+NOT_ADMIN_EXCEPTION = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail='You are not an admin',
+    headers={'WWW-Authenticate': 'Bearer'}
+)
+
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -56,10 +62,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         username: str = payload.get('sub')
         if username is None:
             raise CREDENTIALS_EXCEPTION
-        token_data = schemas.TokenData(username=username)
     except JWTError:
         raise CREDENTIALS_EXCEPTION
     user = users_crud.get_user(db, username)
     if user is None:
         raise CREDENTIALS_EXCEPTION
+    return user
+
+
+async def get_admin_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    user = await get_current_user(token, db)
+    if not user.is_admin:
+        raise NOT_ADMIN_EXCEPTION
     return user

@@ -3,14 +3,15 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app import get_db
-from app.auth import get_current_user
+from app.auth import get_current_user, get_admin_user
 from . import schemas, crud
 
 router = APIRouter()
 
 
 @router.get('/', response_model=List[schemas.SimpleUser])
-async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+async def get_users(user: schemas.User = Depends(get_admin_user), skip: int = 0, 
+                    limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_users(db, skip, limit)
 
 

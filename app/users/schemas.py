@@ -18,6 +18,7 @@ class UserCreate(UserBase):
 class SimpleUser(UserBase):
     id: int
     is_active: bool
+    is_admin: bool
 
 
 class UserSimple(UserBase):

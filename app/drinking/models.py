@@ -13,7 +13,7 @@ class Drink(Base):
     datetime = Column(DateTime, default=datetime.now)
     user_id = Column(Integer, ForeignKey('users.id'), index=True)
 
-    user = relationship('User', back_populates='drinks')
+    user = relationship('User')
 
 
 class DrinkNotification(Base):
