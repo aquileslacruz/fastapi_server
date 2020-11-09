@@ -18,7 +18,12 @@ def create_user(db: Session, user: schemas.UserCreate):
     from app.auth import get_password_hash
 
     hashed_password = get_password_hash(user.password)
-    db_user = models.User(username=user.username, hashed_password=hashed_password)
+    db_user = models.User(
+        username=user.username,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        hashed_password=hashed_password
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -47,3 +52,7 @@ def remove_follow(db: Session, user: schemas.User, unfollow: str):
     db.commit()
     db.refresh(user)
     return user
+
+
+def get_followers(db: Session, user: schemas.User):
+    return db.query(models.User).filter(models.User.following.any(id=user.id)).all()

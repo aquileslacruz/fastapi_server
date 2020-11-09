@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from .database import engine, Base
 from .auth.router import router as auth_router
 from .users.router import router as users_router
+from .drinking.router import router as drinking_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,3 +25,10 @@ app.include_router(
     responses={404: {'description': 'Not Found'}}
 )
 
+# Drink Routes
+app.include_router(
+    drinking_router,
+    prefix='/drinks',
+    tags=['drinks'],
+    responses={404: {'description': 'Not Found'}}
+)

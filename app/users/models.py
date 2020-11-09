@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, UniqueConstraint
-from sqlalchemy.orm import relation
+from sqlalchemy.orm import relation, relationship
 
 from app.database import Base
 
@@ -18,6 +18,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
+    first_name = Column(String, default='')
+    last_name = Column(String, default='')
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
 
@@ -27,3 +29,5 @@ class User(Base):
         primaryjoin=following.c.user_id == id,
         secondaryjoin=following.c.follow_id == id
     )
+
+    drinks = relationship('Drink', back_populates='user')

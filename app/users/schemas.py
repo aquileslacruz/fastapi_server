@@ -11,14 +11,21 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    first_name: Optional[str] = ''
+    last_name: Optional[str] = ''
 
 
 class SimpleUser(UserBase):
     id: int
     is_active: bool
 
-    class Config:
-        orm_mode = True
+
+class UserSimple(UserBase):
+    first_name: str
+    last_name: str
+
 
 class User(SimpleUser):
+    first_name: str
+    last_name: str
     following: List[UserBase] = []
