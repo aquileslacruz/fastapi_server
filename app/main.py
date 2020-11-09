@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .database import engine, Base
 from .auth.router import router as auth_router
@@ -8,6 +9,15 @@ from .drinking.router import router as drinking_router
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Auth Routes
 app.include_router(

@@ -31,8 +31,8 @@ async def reload(user: user_schemas.User = Depends(get_current_user)):
 
 
 @router.post('/', response_model=schemas.Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = authenticate_user(db, form_data.username, form_data.password)
+async def login(data: dict, db: Session = Depends(get_db)):
+    user = authenticate_user(db, data.get('username'), data.get('password'))
     if not user:
         raise LOGIN_EXCEPTION
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
