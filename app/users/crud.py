@@ -49,7 +49,7 @@ def add_follow(db: Session, user: schemas.User, follow: str):
 
 def remove_follow(db: Session, user: schemas.User, unfollow: str):
     person = db.query(models.User).filter(models.User.username == unfollow).first()
-    if person in None:
+    if person is None:
         raise USERNAME_NOT_FOUND
     if person not in user.following:
         raise USERNAME_NOT_FOUND
