@@ -22,6 +22,7 @@ class User(Base):
     last_name = Column(String, default='')
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
 
     following = relation(
         'User',
@@ -29,5 +30,3 @@ class User(Base):
         primaryjoin=following.c.user_id == id,
         secondaryjoin=following.c.follow_id == id
     )
-
-    drinks = relationship('Drink', back_populates='user')

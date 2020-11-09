@@ -14,7 +14,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user(db: Session, user: schemas.UserCreate, is_admin: bool = False):
     from app.auth import get_password_hash
 
     hashed_password = get_password_hash(user.password)
@@ -22,12 +22,17 @@ def create_user(db: Session, user: schemas.UserCreate):
         username=user.username,
         first_name=user.first_name,
         last_name=user.last_name,
+        is_admin=is_admin,
         hashed_password=hashed_password
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def create_admin_user(db: Session, user: schemas.UserCreate):
+    return create_user(db, user, is_admin=True)
 
 
 def add_follow(db: Session, user: schemas.User, follow: str):
