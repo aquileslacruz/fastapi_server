@@ -25,6 +25,11 @@ class Drink(DrinkSimple):
 
 
 class DrinkNotificationSimple(BaseModel):
-    user: user_schemas.UserSimple
+    id: int
+    user: str
     glasses: int
     datetime: datetime
+
+
+class IdList(BaseModel):
+    id_list: List[int]
