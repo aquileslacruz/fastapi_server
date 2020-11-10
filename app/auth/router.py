@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from fastapi import HTTPException, APIRouter, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sqlalchemy.orm import Session
 
 from app import settings, get_db
@@ -9,6 +9,7 @@ from app.users import schemas as user_schemas
 
 
 router = APIRouter()
+security = HTTPBasic()
 
 LOGIN_EXCEPTION = HTTPException(
     status.HTTP_401_UNAUTHORIZED,
@@ -31,8 +32,8 @@ async def reload(user: user_schemas.User = Depends(get_current_user)):
 
 
 @router.post('/', response_model=schemas.Token)
-async def login(data: dict, db: Session = Depends(get_db)):
-    user = authenticate_user(db, data.get('username'), data.get('password'))
+async def login(credentials: HTTPBasicCredentials = Depends(security), db: Session = Depends(get_db)):
+    user = authenticate_user(db, credentials.username, credentials.password)
     if not user:
         raise LOGIN_EXCEPTION
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
