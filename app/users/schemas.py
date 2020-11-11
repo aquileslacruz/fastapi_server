@@ -26,7 +26,14 @@ class UserSimple(UserBase):
     last_name: str
 
 
+class UserId(BaseModel):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class User(SimpleUser):
     first_name: str
     last_name: str
-    following: List[UserBase] = []
+    following: List[UserId] = []

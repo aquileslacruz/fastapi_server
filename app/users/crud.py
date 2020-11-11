@@ -14,9 +14,12 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def search_users(db: Session, query: str, skip: int = 0, limit: int = 10):
+def search_users(db: Session, user: schemas.User, query: str, skip: int = 0, limit: int = 10):
     return db.query(models.User)\
-            .filter(models.User.username.startswith(query))\
+            .filter(
+                models.User.username.startswith(query),
+                models.User.id != user.id
+            )\
             .offset(skip).limit(limit).all()
 
 
