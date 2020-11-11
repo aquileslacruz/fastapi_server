@@ -23,6 +23,12 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
+@router.get('/search', response_model=List[schemas.SimpleUser])
+async def search_users(user: schemas.User = Depends(get_current_user), skip: int = 0,
+                       limit: int = 10, q: str = '', db: Session = Depends(get_db)):
+    return crud.search_users(db, q, skip, limit)
+
+
 @router.get('/me', response_model=schemas.User)
 async def get_my_user(user: schemas.User = Depends(get_current_user)):
     return user

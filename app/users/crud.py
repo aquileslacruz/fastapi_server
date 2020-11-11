@@ -14,6 +14,12 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
+def search_users(db: Session, query: str, skip: int = 0, limit: int = 10):
+    return db.query(models.User)\
+            .filter(models.User.username.startswith(query))\
+            .offset(skip).limit(limit).all()
+
+
 def create_user(db: Session, user: schemas.UserCreate, is_admin: bool = False):
     from app.auth import get_password_hash
 
