@@ -2,8 +2,10 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from . import models, schemas
 
+ID_NOT_FOUND = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Id not found')
 USERNAME_NOT_FOUND = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username not found')
 ALREADY_FOLLOWING = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Already following')
+NOT_FOLLOWING = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Not following')
 
 
 def get_user(db: Session, username: str):
@@ -46,6 +48,28 @@ def create_user(db: Session, user: schemas.UserCreate, is_admin: bool = False):
 
 def create_admin_user(db: Session, user: schemas.UserCreate):
     return create_user(db, user, is_admin=True)
+
+
+def follow_user(db: Session, user: schemas.User, id: int):
+    person = db.query(models.User).filter(models.User.id == id).first()
+    if person is None:
+        raise ID_NOT_FOUND
+    if person in user.following:
+        raise ALREADY_FOLLOWING
+    user.following.append(person)
+    db.commit()
+    return True
+
+
+def unfollow_user(db: Session, user: schemas.User, id: int):
+    person = db.query(models.User).filter(models.User.id == id).first()
+    if person is None:
+        raise ID_NOT_FOUND
+    if person not in user.following:
+        raise NOT_FOLLOWING
+    user.following.remove(person)
+    db.commit()
+    return True
 
 
 def add_follow(db: Session, user: schemas.User, follow: str):
