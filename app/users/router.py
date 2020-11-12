@@ -37,3 +37,8 @@ async def get_my_user(user: schemas.User = Depends(get_current_user)):
 @router.post('/follow', response_model=schemas.User)
 async def create_follow(followee: schemas.UserBase, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     return crud.add_follow(db, user, followee.username)
+
+
+@router.get('/{user_id}', response_model=schemas.SimpleUser)
+async def get_user(user_id: int, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return crud.get_user_by_id(db, id=user_id)
