@@ -6,6 +6,7 @@ __pycache__/
 
 # SQLite Databases
 sql_app.db
+create_users.py
 initialize_db.sh
 
 # Editor
