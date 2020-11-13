@@ -36,4 +36,3 @@ class UserId(BaseModel):
 class User(SimpleUser):
     first_name: str
     last_name: str
-    following: List[UserId] = []

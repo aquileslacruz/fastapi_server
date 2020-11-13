@@ -11,7 +11,9 @@ router = APIRouter()
 
 
 @router.get('/', response_model=List[schemas.DrinkNotification])
-async def get_notifications(user: user_schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_notifications(
+        user: user_schemas.User = Depends(get_current_user),
+        db: Session = Depends(get_db)):
     notifications = crud.get_notifications(db, user)
     return [{
         'id': notification.id,
@@ -22,6 +24,9 @@ async def get_notifications(user: user_schemas.User = Depends(get_current_user),
 
 
 @router.delete('/{notification_id}/')
-async def remove_notification(notification_id: int, user: user_schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def remove_notification(
+    notification_id: int,
+    user: user_schemas.User = Depends(get_current_user),
+    db: Session = Depends(get_db)):
     crud.remove_notification(db=db, id=notification_id, user=user)
     return 'Notification Removed'

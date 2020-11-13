@@ -21,33 +21,33 @@ app.add_middleware(
 )
 
 # Auth Routes
-app.include_router(
-    auth_router,
-    prefix='/token',
-    tags=['auth'],
-    responses={404: {'description': 'Not Found'}}
-)
+app.include_router(auth_router,
+                   prefix='/token',
+                   tags=['auth'],
+                   responses={404: {
+                       'description': 'Not Found'
+                   }})
 
 # User Routes
-app.include_router(
-    users_router,
-    prefix='/users',
-    tags=['users'],
-    responses={404: {'description': 'Not Found'}}
-)
+app.include_router(users_router,
+                   prefix='/users',
+                   tags=['users'],
+                   responses={404: {
+                       'description': 'Not Found'
+                   }})
 
 # Drink Routes
-app.include_router(
-    drinking_router,
-    prefix='/drinks',
-    tags=['drinks'],
-    responses={404: {'description': 'Not Found'}}
-)
+app.include_router(drinking_router,
+                   prefix='/drinks',
+                   tags=['drinks'],
+                   responses={404: {
+                       'description': 'Not Found'
+                   }})
 
 # Notification Routes
-app.include_router(
-    notifications_router,
-    prefix='/notifications',
-    tags=['notifications'],
-    responses={404: {'description': 'Not Found'}}
-)
+app.include_router(notifications_router,
+                   prefix='/notifications',
+                   tags=['notifications'],
+                   responses={404: {
+                       'description': 'Not Found'
+                   }})

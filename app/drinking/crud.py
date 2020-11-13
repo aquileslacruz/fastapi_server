@@ -7,6 +7,7 @@ from app.users import models as user_models
 from app.notifications import crud as notifications_crud
 from . import models, schemas
 
+
 def add_drink(db: Session, user: user_schemas.User, glasses: int):
     # Create Drink
     drink = models.Drink(user_id=user.id, glasses=glasses)
@@ -16,6 +17,9 @@ def add_drink(db: Session, user: user_schemas.User, glasses: int):
 
     # Notify Followers
     followers = users_crud.get_followers(db, user)
-    _ = [notifications_crud.add_notification(db, drink, follower) for follower in followers]
-    
+    _ = [
+        notifications_crud.add_notification(db, drink, follower)
+        for follower in followers
+    ]
+
     return drink
