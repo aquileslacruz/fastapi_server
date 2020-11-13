@@ -15,6 +15,7 @@ LOGIN_EXCEPTION = HTTPException(status.HTTP_401_UNAUTHORIZED,
                                 headers={"WWW-Authenticate": "Bearer"})
 
 
+# USE TOKEN TO GET A NEW ONE
 @router.get('/', response_model=schemas.Token)
 async def reload(user: user_schemas.User = Depends(get_current_user)):
     access_token_expires = timedelta(
@@ -24,6 +25,7 @@ async def reload(user: user_schemas.User = Depends(get_current_user)):
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 
+# GET A NEW TOKEN USING USERNAME AND PASSWORD
 @router.post('/', response_model=schemas.Token)
 async def login(credentials: HTTPBasicCredentials = Depends(security),
                 db: Session = Depends(get_db)):

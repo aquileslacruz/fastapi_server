@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import Date, cast, func
+from datetime import date
 from typing import List
 
 from app.users import schemas as user_schemas
@@ -23,3 +25,12 @@ def add_drink(db: Session, user: user_schemas.User, glasses: int):
     ]
 
     return drink
+
+
+def get_todays_drinks(db: Session, user: user_schemas.User):
+    return db.query(models.Drink).filter(
+        models.Drink.user_id == user.id,
+        #cast(models.Drink.datetime, Date) == date.today()
+        func.DATE(models.Drink.datetime) == date.today()
+        ).order_by(
+            models.Drink.datetime.desc()).all()

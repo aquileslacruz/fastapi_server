@@ -10,6 +10,7 @@ from . import schemas, crud
 router = APIRouter()
 
 
+# GET ALL MY NOTIFICATIONS
 @router.get('/', response_model=List[schemas.DrinkNotification])
 async def get_notifications(
         user: user_schemas.User = Depends(get_current_user),
@@ -23,6 +24,7 @@ async def get_notifications(
     } for notification in notifications]
 
 
+# REMOVE NOTIFICATION BY ID
 @router.delete('/{notification_id}/')
 async def remove_notification(
     notification_id: int,
