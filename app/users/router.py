@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from math import ceil
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -8,14 +9,24 @@ from . import schemas, crud
 
 router = APIRouter()
 
+NOT_ALLOWED_EXCEPTION = HTTPException(status.HTTP_401_UNAUTHORIZED, 'You are not allowed')
+
 
 # GET USERS
-@router.get('/', response_model=List[schemas.SimpleUser])
-async def get_users(user: schemas.User = Depends(get_admin_user),
-                    skip: int = 0,
+@router.get('/', response_model=schemas.PaginatedUser)
+async def get_users(page: int = 1,
                     limit: int = 100,
+                    user: schemas.User = Depends(get_admin_user),
                     db: Session = Depends(get_db)):
-    return crud.get_users(db, skip, limit)
+    total, users, max_page = crud.get_users(db, page, limit)
+    data = {
+        'page': page,
+        'per_page': limit,
+        'page_count': max_page,
+        'total_count': total,
+        'results': users
+    }
+    return schemas.PaginatedUser(**data)
 
 
 # CREATE USER
@@ -64,6 +75,26 @@ async def get_user(user_id: int,
                    user: schemas.User = Depends(get_current_user),
                    db: Session = Depends(get_db)):
     return crud.get_user_by_id(db, id=user_id)
+
+
+# EDIT USER
+@router.put('/{user_id}/', response_model=schemas.User)
+async def modify_user(user_id: int,
+                      data: dict,
+                      user: schemas.User = Depends(get_current_user),
+                      db: Session = Depends(get_db)):
+    if not user.is_admin and user_id != user.id:
+        raise NOT_ALLOWED_EXCEPTION 
+    return crud.modify_user_by_id(db, id=user_id, data=data)
+
+
+# DELETE USER
+@router.delete('/{user_id}/', response_model=str)
+async def delete_user(user_id: int,
+                      user: schemas.User = Depends(get_admin_user),
+                      db: Session = Depends(get_db)):
+    crud.delete_user_by_id(db, id=user_id)
+    return 'Deleted User'
 
 
 # FOLLOW USER

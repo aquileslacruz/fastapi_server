@@ -36,3 +36,12 @@ class UserId(BaseModel):
 class User(SimpleUser):
     first_name: str
     last_name: str
+
+
+class PaginatedUser(BaseModel):
+    page: int
+    per_page: int
+    page_count: int
+    total_count: int
+    results: List[User]
+    

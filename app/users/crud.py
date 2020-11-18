@@ -1,3 +1,4 @@
+from math import ceil
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from . import models, schemas
@@ -11,6 +12,9 @@ ALREADY_FOLLOWING = HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
 NOT_FOLLOWING = HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                               detail='Not following')
 
+PAGE_ERROR = HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                           detail='Page number not allowed')
+
 
 def get_user(db: Session, username: str):
     return db.query(
@@ -21,8 +25,29 @@ def get_user_by_id(db: Session, id: int):
     return db.query(models.User).filter(models.User.id == id).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+def modify_user_by_id(db: Session, id: int, data: dict):
+    user = db.query(models.User).filter(models.User.id == id).first()
+    user.is_admin = data['is_admin']
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def delete_user_by_id(db: Session, id: int):
+    db.query(models.User).filter(models.User.id == id).delete()
+    db.commit()
+    return True
+
+def get_users(db: Session, page: int = 1, limit: int = 100):
+    if page < 0:
+        raise PAGE_ERROR
+    total = db.query(models.User).count()
+    max_page = ceil(total / limit)
+    if page > max_page:
+        raise PAGE_ERROR
+    results = db.query(models.User).offset((page-1) * limit).limit(limit).all()
+    return total, results, max_page
 
 
 def search_users(db: Session,
