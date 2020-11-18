@@ -1,10 +1,13 @@
 import random
 
-from app.database import SessionLocal
+from app.database import SessionLocal, engine, Base
 from app.users import schemas, crud
 
 FIRST_NAMES = ['John', 'Steve', 'Michael', 'Dyrus', 'Jeremy']
 LAST_NAMES = ['Michaels', 'Stevens', 'Andrews', 'Jones', 'Johnson']
+
+# Create the DB
+Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
