@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import Date, cast, func
 from datetime import date
 from typing import List
+import os
 
 from app.users import schemas as user_schemas
 from app.users import crud as users_crud
@@ -28,9 +29,13 @@ def add_drink(db: Session, user: user_schemas.User, glasses: int):
 
 
 def get_todays_drinks(db: Session, user: user_schemas.User):
+    if os.getenv('ENVIRONMENT') != 'dev':
+        date_filter = cast(models.Drink.datetime, Date)
+    else:
+        date_filter = func.DATE(models.Drink.datetime)
+    
     return db.query(models.Drink).filter(
         models.Drink.user_id == user.id,
-        #cast(models.Drink.datetime, Date) == date.today()
-        func.DATE(models.Drink.datetime) == date.today()
+        date_filter == date.today()
         ).order_by(
             models.Drink.datetime.desc()).all()

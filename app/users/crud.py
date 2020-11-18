@@ -44,7 +44,7 @@ def get_users(db: Session, page: int = 1, limit: int = 100):
         raise PAGE_ERROR
     total = db.query(models.User).count()
     max_page = ceil(total / limit)
-    if page > max_page:
+    if page > 1 and page > max_page:
         raise PAGE_ERROR
     results = db.query(models.User).offset((page-1) * limit).limit(limit).all()
     return total, results, max_page
