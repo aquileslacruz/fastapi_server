@@ -34,7 +34,6 @@ for i in range(1, 100):
     }
     user = crud.create_user(db, schemas.UserCreate(**data))
     users.append(user)
-    print('User {} created'.format(user.username))
 
 # Add 10-15 follows to each user
 for user in users:
